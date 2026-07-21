@@ -6,10 +6,10 @@ import java.util.List;
 
 @Data
 public class Hero {
-    private final Integer id;
+    private final Long id;
     private String name;
     private Integer strengthLevel;
     private Integer constitutionLevel;
     private Integer speedLevel;
-    private List<Integer> dungeonIds;
+    private List<Long> dungeonIds;
 }
