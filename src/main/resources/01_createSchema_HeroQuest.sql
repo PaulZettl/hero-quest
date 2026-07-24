@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS dungeon (
 -- Create hero_dungeon_completed table:
 
 CREATE TABLE IF NOT EXISTS hero_dungeon_completed (
-	hero_id INT,
-	dungeon_id INT,
+	hero_id INT NOT NULL,
+	dungeon_id INT NOT NULL,
 	PRIMARY KEY (hero_id, dungeon_id),
 	FOREIGN KEY (hero_id) REFERENCES hero(id) ON DELETE CASCADE,
 	FOREIGN KEY (dungeon_id) REFERENCES dungeon(id) ON DELETE CASCADE

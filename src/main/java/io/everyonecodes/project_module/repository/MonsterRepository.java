@@ -21,14 +21,14 @@ public class MonsterRepository {
                 .list();
     }
 
-    public Optional<Monster> getById(int id) {
+    public Optional<Monster> getById(Long id) {
         return jdbcClient.sql("SELECT * FROM monster WHERE id = :id")
                 .param("id", id)
                 .query(Monster.class)
                 .optional();
     }
 
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         jdbcClient.sql("DELETE FROM monster WHERE id = :id")
                 .param("id", id)
                 .update();

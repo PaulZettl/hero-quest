@@ -21,14 +21,14 @@ public class DungeonRepository {
                 .list();
     }
 
-    public Optional<Dungeon> getById(int id) {
+    public Optional<Dungeon> getById(Long id) {
         return jdbcClient.sql("SELECT * FROM dungeon WHERE id = :id")
                 .param("id", id)
                 .query(Dungeon.class)
                 .optional();
     }
 
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         jdbcClient.sql("DELETE FROM dungeon WHERE id = :id")
                 .param("id", id)
                 .update();
