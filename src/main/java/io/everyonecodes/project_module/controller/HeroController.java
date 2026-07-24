@@ -13,7 +13,7 @@ public class HeroController {
 
     private final HeroRepository repository;
 
-    public HeroController (HeroRepository repository) {
+    public HeroController(HeroRepository repository) {
         this.repository = repository;
     }
 
