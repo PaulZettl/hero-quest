@@ -15,13 +15,13 @@ public class HeroRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public List<Hero> findAll() {
+    public List<Hero> getAll() {
         return jdbcClient.sql("SELECT * FROM hero")
                 .query(Hero.class)
                 .list();
     }
 
-    public Optional<Hero> findById(int id) {
+    public Optional<Hero> getById(int id) {
         return jdbcClient.sql("SELECT * FROM hero WHERE id = :id")
                 .param("id", id)
                 .query(Hero.class)

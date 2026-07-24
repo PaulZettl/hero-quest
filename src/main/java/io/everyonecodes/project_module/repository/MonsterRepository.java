@@ -15,13 +15,13 @@ public class MonsterRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public List<Monster> findAll() {
+    public List<Monster> getAll() {
         return jdbcClient.sql("SELECT * FROM monster")
                 .query(Monster.class)
                 .list();
     }
 
-    public Optional<Monster> findById(int id) {
+    public Optional<Monster> getById(int id) {
         return jdbcClient.sql("SELECT * FROM monster WHERE id = :id")
                 .param("id", id)
                 .query(Monster.class)

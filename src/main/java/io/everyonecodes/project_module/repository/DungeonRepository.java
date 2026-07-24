@@ -15,13 +15,13 @@ public class DungeonRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public List<Dungeon> findAll() {
+    public List<Dungeon> getAll() {
         return jdbcClient.sql("SELECT * FROM dungeon")
                 .query(Dungeon.class)
                 .list();
     }
 
-    public Optional<Dungeon> findById(int id) {
+    public Optional<Dungeon> getById(int id) {
         return jdbcClient.sql("SELECT * FROM dungeon WHERE id = :id")
                 .param("id", id)
                 .query(Dungeon.class)
