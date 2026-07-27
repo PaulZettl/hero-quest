@@ -11,9 +11,17 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, String>> handleDuplicateName(DataIntegrityViolationException ex) {
+    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String errorMessage = ex.getMostSpecificCause().getMessage();
+
+        if (errorMessage != null && errorMessage.contains("hero_name_key")) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "A hero with this name already exists."));
+        }
+
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", "A hero with this name already exists."));
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Invalid data provided."));
     }
 }

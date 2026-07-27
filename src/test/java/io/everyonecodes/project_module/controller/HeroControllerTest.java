@@ -10,6 +10,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,8 +105,12 @@ public class HeroControllerTest {
     void createHero_duplicateName() throws Exception {
         Hero duplicateHero = new Hero();
         duplicateHero.setName("ExistingHero");
+
+        // Fake error with most specific cause message
+        Throwable fakePostgresError = new SQLException("duplicate key value violates unique constraint \"hero_name_key\"");
         when(repository.create(any(Hero.class)))
-                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate name"));
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Spring DB Error", fakePostgresError));
+
         mockMvc.perform(post("/hero")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(duplicateHero)))
@@ -153,8 +158,10 @@ public class HeroControllerTest {
         updatedHero.setId(1L);
         updatedHero.setName("ExistingName");
 
+        // Fake error with most specific cause message
+        Throwable fakePostgresError = new SQLException("duplicate key value violates unique constraint \"hero_name_key\"");
         when(repository.update(any(Hero.class)))
-                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate name"));
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Spring DB Error", fakePostgresError));
 
         mockMvc.perform(put("/hero/1")
                         .contentType(MediaType.APPLICATION_JSON)
