@@ -19,8 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @WebMvcTest({HeroController.class, GlobalExceptionHandler.class})
@@ -28,6 +27,9 @@ public class HeroControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private HeroRepository repository;
@@ -92,7 +94,7 @@ public class HeroControllerTest {
         when(repository.create(any(Hero.class))).thenReturn(savedHero);
         mockMvc.perform(post("/hero")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(inputHero)))
+                        .content(objectMapper.writeValueAsString(inputHero)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(5))
                 .andExpect(jsonPath("$.name").value("New Hero"));
@@ -106,7 +108,7 @@ public class HeroControllerTest {
                 .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate name"));
         mockMvc.perform(post("/hero")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(duplicateHero)))
+                        .content(objectMapper.writeValueAsString(duplicateHero)))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").value("A hero with this name already exists."));
     }
@@ -127,7 +129,7 @@ public class HeroControllerTest {
         when(repository.update(any(Hero.class))).thenReturn(Optional.of(updatedHero));
         mockMvc.perform(put("/hero/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(updatedHero)))
+                        .content(objectMapper.writeValueAsString(updatedHero)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Test"));
@@ -141,7 +143,41 @@ public class HeroControllerTest {
         when(repository.update(any(Hero.class))).thenReturn(Optional.empty());
         mockMvc.perform(put("/hero/99")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(updatedHero)))
+                        .content(objectMapper.writeValueAsString(updatedHero)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateHero_duplicateName() throws Exception {
+        Hero updatedHero = new Hero();
+        updatedHero.setId(1L);
+        updatedHero.setName("ExistingName");
+
+        when(repository.update(any(Hero.class)))
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate name"));
+
+        mockMvc.perform(put("/hero/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedHero)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("A hero with this name already exists."));
+    }
+
+    @Test
+    void getCompletedDungeonIds_valid() throws Exception {
+        Hero testHero = new Hero();
+        testHero.setId(1L);
+        when(repository.getById(1L)).thenReturn(Optional.of(testHero));
+        when(repository.getAllCompletedDungeonIdsByHeroId(1L)).thenReturn(List.of(1L, 2L, 3L));
+        mockMvc.perform(get("/hero/1/completedDungeons"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[1, 2, 3]"));
+    }
+
+    @Test
+    void getCompletedDungeonIds_heroNotFound() throws Exception {
+        when(repository.getById(99L)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/hero/99/completedDungeons"))
                 .andExpect(status().isNotFound());
     }
 }
