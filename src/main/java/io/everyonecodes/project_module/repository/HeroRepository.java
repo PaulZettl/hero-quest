@@ -43,6 +43,7 @@ public class HeroRepository {
                 .query(Hero.class)
                 .single();
     }
+
     public Optional<Hero> update(Hero hero) {
         return jdbcClient.sql("UPDATE hero set name = :name, strength_level = :strengthLevel, constitution_level = :constitutionLevel, speed_level = :speedLevel WHERE id = :id RETURNING *")
                 .param("id", hero.getId())
