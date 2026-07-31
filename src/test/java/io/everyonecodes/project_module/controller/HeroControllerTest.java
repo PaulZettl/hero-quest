@@ -106,7 +106,7 @@ public class HeroControllerTest {
         Hero duplicateHero = new Hero();
         duplicateHero.setName("ExistingHero");
 
-        // Fake error with most specific cause message
+        // Duplicate hero name error
         Throwable fakePostgresError = new SQLException("duplicate key value violates unique constraint \"hero_name_key\"");
         when(repository.create(any(Hero.class)))
                 .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Spring DB Error", fakePostgresError));
@@ -158,7 +158,7 @@ public class HeroControllerTest {
         updatedHero.setId(1L);
         updatedHero.setName("ExistingName");
 
-        // Fake error with most specific cause message
+        // Duplicate hero name error
         Throwable fakePostgresError = new SQLException("duplicate key value violates unique constraint \"hero_name_key\"");
         when(repository.update(any(Hero.class)))
                 .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Spring DB Error", fakePostgresError));
