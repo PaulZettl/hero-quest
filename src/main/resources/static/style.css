@@ -1,0 +1,17 @@
+#dungeon-screen {
+}
+
+#hero-container {
+    border-style: solid;
+}
+
+.hero-card {
+    border-style: solid;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.dungeon-card {
+    border-style: solid;
+    margin-bottom: 10px;
+}
