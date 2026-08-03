@@ -2,9 +2,12 @@ package io.everyonecodes.project_module.service;
 
 import io.everyonecodes.project_module.entity.Dungeon;
 import io.everyonecodes.project_module.repository.DungeonRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DungeonService {
@@ -14,7 +17,15 @@ public class DungeonService {
         this.repository = repository;
     }
 
+    private ResponseStatusException dungeonNotFound(Long id) {
+        return new ResponseStatusException(HttpStatus.NOT_FOUND, "Dungeon with ID " + id + " not found");
+    }
+
     public List<Dungeon> getAll() {
         return repository.getAll();
+    }
+
+    public Optional<Dungeon> getById(Long id) {
+        return repository.getById(id);
     }
 }

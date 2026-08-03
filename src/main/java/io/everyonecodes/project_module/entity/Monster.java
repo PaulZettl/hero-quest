@@ -9,4 +9,12 @@ public class Monster {
     private Integer strengthLevel;
     private Integer constitutionLevel;
     private Integer speedLevel;
+    private int currentHp;
+
+    public int getMaximumHp() {
+        if (constitutionLevel == null) {
+            return 0;
+        }
+        return constitutionLevel * 2;
+    }
 }
