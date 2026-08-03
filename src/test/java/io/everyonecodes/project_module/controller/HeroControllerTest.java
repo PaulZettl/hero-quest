@@ -1,7 +1,7 @@
 package io.everyonecodes.project_module.controller;
 
 import io.everyonecodes.project_module.entity.Hero;
-import io.everyonecodes.project_module.repository.HeroRepository;
+import io.everyonecodes.project_module.service.HeroService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -33,7 +33,7 @@ public class HeroControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private HeroRepository repository;
+    private HeroService service;
 
     @Test
     void getAllHeroes_valid() throws Exception {
@@ -48,7 +48,7 @@ public class HeroControllerTest {
         fakeHero3.setName("Test3");
 
         List<Hero> fakeHeroes = List.of(fakeHero1, fakeHero2, fakeHero3);
-        when(repository.getAll()).thenReturn(fakeHeroes);
+        when(service.getAll()).thenReturn(fakeHeroes);
         mockMvc.perform(get("/hero"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
@@ -60,7 +60,7 @@ public class HeroControllerTest {
     @Test
     void getAllHeroes_emptyList() throws Exception {
         List<Hero> fakeHeroes = List.of();
-        when(repository.getAll()).thenReturn(fakeHeroes);
+        when(service.getAll()).thenReturn(fakeHeroes);
         mockMvc.perform(get("/hero"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -71,7 +71,7 @@ public class HeroControllerTest {
         Hero fakeHero = new Hero();
         fakeHero.setId(1L);
         fakeHero.setName("Testing");
-        when(repository.getById(1L)).thenReturn(Optional.of(fakeHero));
+        when(service.getById(1L)).thenReturn(Optional.of(fakeHero));
         mockMvc.perform(get("/hero/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -80,7 +80,7 @@ public class HeroControllerTest {
 
     @Test
     void getHeroById_idNotFound() throws Exception {
-        when(repository.getById(99L)).thenReturn(Optional.empty());
+        when(service.getById(99L)).thenReturn(Optional.empty());
         mockMvc.perform(get("/hero/99"))
                 .andExpect(status().isNotFound());
     }
@@ -92,7 +92,7 @@ public class HeroControllerTest {
         Hero savedHero = new Hero();
         savedHero.setId(5L);
         savedHero.setName("New Hero");
-        when(repository.create(any(Hero.class))).thenReturn(savedHero);
+        when(service.create(any(Hero.class))).thenReturn(savedHero);
         mockMvc.perform(post("/hero")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(inputHero)))
@@ -108,7 +108,7 @@ public class HeroControllerTest {
 
         // Duplicate hero name error
         Throwable fakePostgresError = new SQLException("duplicate key value violates unique constraint \"hero_name_key\"");
-        when(repository.create(any(Hero.class)))
+        when(service.create(any(Hero.class)))
                 .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Spring DB Error", fakePostgresError));
 
         mockMvc.perform(post("/hero")
@@ -123,7 +123,7 @@ public class HeroControllerTest {
         Long heroId = 1L;
         mockMvc.perform(delete("/hero/1"))
                 .andExpect(status().isNoContent());
-        verify(repository).deleteById(heroId); // checks if the repository was asked to delete
+        verify(service).deleteById(heroId); // checks if the repository was asked to delete
     }
 
     @Test
@@ -131,7 +131,7 @@ public class HeroControllerTest {
         Hero updatedHero = new Hero();
         updatedHero.setId(1L);
         updatedHero.setName("Test");
-        when(repository.update(any(Hero.class))).thenReturn(Optional.of(updatedHero));
+        when(service.update(any(Hero.class))).thenReturn(Optional.of(updatedHero));
         mockMvc.perform(put("/hero/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedHero)))
@@ -145,7 +145,7 @@ public class HeroControllerTest {
         Hero updatedHero = new Hero();
         updatedHero.setId(99L);
         updatedHero.setName("Test");
-        when(repository.update(any(Hero.class))).thenReturn(Optional.empty());
+        when(service.update(any(Hero.class))).thenReturn(Optional.empty());
         mockMvc.perform(put("/hero/99")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedHero)))
@@ -160,7 +160,7 @@ public class HeroControllerTest {
 
         // Duplicate hero name error
         Throwable fakePostgresError = new SQLException("duplicate key value violates unique constraint \"hero_name_key\"");
-        when(repository.update(any(Hero.class)))
+        when(service.update(any(Hero.class)))
                 .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Spring DB Error", fakePostgresError));
 
         mockMvc.perform(put("/hero/1")
@@ -174,8 +174,8 @@ public class HeroControllerTest {
     void getCompletedDungeonIds_valid() throws Exception {
         Hero testHero = new Hero();
         testHero.setId(1L);
-        when(repository.getById(1L)).thenReturn(Optional.of(testHero));
-        when(repository.getAllCompletedDungeonIdsByHeroId(1L)).thenReturn(List.of(1L, 2L, 3L));
+        when(service.getById(1L)).thenReturn(Optional.of(testHero));
+        when(service.getAllCompletedDungeonIdsByHeroId(1L)).thenReturn(List.of(1L, 2L, 3L));
         mockMvc.perform(get("/hero/1/completedDungeons"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[1, 2, 3]"));
@@ -183,7 +183,7 @@ public class HeroControllerTest {
 
     @Test
     void getCompletedDungeonIds_heroNotFound() throws Exception {
-        when(repository.getById(99L)).thenReturn(Optional.empty());
+        when(service.getById(99L)).thenReturn(Optional.empty());
         mockMvc.perform(get("/hero/99/completedDungeons"))
                 .andExpect(status().isNotFound());
     }

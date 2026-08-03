@@ -10,7 +10,7 @@
 CREATE TABLE IF NOT EXISTS hero (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(20) UNIQUE NOT NULL CHECK (TRIM(name) <> ''), -- Checks that the trimmed name is not an empty String
-	strength_level INT NOT NULL CHECK (strength_level > 0), -- Checks that the level value is not negative
+	strength_level INT NOT NULL CHECK (strength_level > 0), -- Checks that the level value is not negative or 0
 	constitution_level INT NOT NULL CHECK (constitution_level > 0),
 	speed_level INT NOT NULL CHECK (speed_level > 0)
 	);
