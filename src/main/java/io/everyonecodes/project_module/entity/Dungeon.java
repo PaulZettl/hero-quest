@@ -9,5 +9,4 @@ public class Dungeon {
     private String description;
     private Integer difficultyLevel;
     private Long monsterId;
-//    private List<Long> heroIds;
 }

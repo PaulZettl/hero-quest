@@ -11,7 +11,7 @@ ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO monster (name, strength_level, constitution_level, speed_level)
 VALUES
-('Goblin', 1, 1, 2),
+('Goblin', 1, 1, 1),
 ('Thief', 1, 2, 3),
 ('Owlbear', 3, 4, 2)
 ON CONFLICT (name) DO NOTHING;

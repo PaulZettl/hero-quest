@@ -4,7 +4,10 @@ import io.everyonecodes.project_module.entity.Dungeon;
 import io.everyonecodes.project_module.entity.DungeonReport;
 import io.everyonecodes.project_module.entity.Hero;
 import io.everyonecodes.project_module.entity.Monster;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,12 @@ public class DungeonRunService {
     private final DungeonService dungeonService;
     private final MonsterService monsterService;
 
+    @Value("${game.combat.max-hp-factor}")
+    private int maxHpFactor;
+
+    @Value("${game.combat.max-rounds}")
+    private int maxCombatRounds;
+
     public DungeonRunService(HeroService heroService, DungeonService dungeonService, MonsterService monsterService) {
         this.heroService = heroService;
         this.dungeonService = dungeonService;
@@ -23,9 +32,9 @@ public class DungeonRunService {
     }
 
     public DungeonReport generateReport(Long heroId, Long dungeonId) {
-        Hero hero = heroService.getById(heroId).orElseThrow();
-        Dungeon dungeon = dungeonService.getById(dungeonId).orElseThrow();
-        Monster monster = monsterService.getMonsterById(dungeon.getMonsterId()).orElseThrow();
+        Hero hero = heroService.getById(heroId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hero not found"));
+        Dungeon dungeon = dungeonService.getById(dungeonId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dungeon not found"));
+        Monster monster = monsterService.getMonsterById(dungeon.getMonsterId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Monster not found"));
         List<String> combatLines = new ArrayList<>();
         hero.setCurrentHp(getMaximumHp(hero));
         monster.setCurrentHp(getMaximumHp(monster));
@@ -39,7 +48,7 @@ public class DungeonRunService {
 
         int roundNumber = 1;
 
-        while (true) {
+        while (roundNumber <= maxCombatRounds) {
             combatLines.addAll(writeCombatRound(hero, monster, roundNumber));
             if (hero.getCurrentHp() < 1) {
                 combatLines.addAll(writeFinalStatus(hero, monster));
@@ -50,40 +59,45 @@ public class DungeonRunService {
                 combatLines.addAll(writeFinalStatus(hero, monster));
                 report.setHeroVictorious(true);
                 report.setCombatLines(combatLines);
+                heroService.markDungeonAsComplete(hero.getId(), dungeon.getId());
                 return report;
             }
             roundNumber++;
         }
+        combatLines.add("Exhausted, " + hero.getName() + " stops fighting and returns home!");
+        combatLines.addAll(writeFinalStatus(hero, monster));
+        report.setHeroVictorious(false);
+        report.setCombatLines(combatLines);
+        return report;
     }
 
     public int getMaximumHp(Hero hero) {
         if (hero.getConstitutionLevel() == null) {
             return 0;
         }
-        return hero.getConstitutionLevel() * 2;
+        return hero.getConstitutionLevel() * maxHpFactor;
     }
 
     public int getMaximumHp(Monster monster) {
         if (monster.getConstitutionLevel() == null) {
             return 0;
         }
-        return monster.getConstitutionLevel() * 2;
+        return monster.getConstitutionLevel() * maxHpFactor;
     }
 
     public List<String> writeStatus(Hero hero, Monster monster) {
         return List.of("--- Status ---",
                 hero.getName() + ": " + hero.getCurrentHp() + " HP",
-                monster.getName() + ": " + monster.getCurrentHp() + " HP",
-                "");
+                monster.getName() + ": " + monster.getCurrentHp() + " HP");
     }
 
     public List<String> writeSpeed(Hero hero, Monster monster) {
         if (hero.getSpeedLevel() > monster.getSpeedLevel()) {
-            return List.of(hero.getName() + " is able to outspeed " + monster.getName(),
+            return List.of(hero.getName() + " is able to outspeed the " + monster.getName(),
                     "getting to strike first!");
         }
         if (hero.getSpeedLevel().equals(monster.getSpeedLevel())) {
-            return List.of("The " + hero.getName() + " keeps pace with the " + monster.getName() + ",",
+            return List.of(hero.getName() + " keeps pace with the " + monster.getName() + ",",
                     "though the monster feels a step ahead.");
         } else {
             return List.of("The " + monster.getName() + " easily outmaneuvers " + hero.getName() + "!");
@@ -126,8 +140,8 @@ public class DungeonRunService {
 
     public List<String> monsterStrikesHero(Monster monster, Hero hero) {
         List<String> combatLines = new ArrayList<>();
-        combatLines.add("The " + monster.getName() + " strikes " + hero.getName() + " ,");
-        combatLines.add("dealing " + monster.getStrengthLevel() + "points of damage.");
+        combatLines.add("The " + monster.getName() + " strikes " + hero.getName() + ",");
+        combatLines.add("dealing " + monster.getStrengthLevel() + " points of damage.");
         return combatLines;
     }
 
@@ -139,7 +153,7 @@ public class DungeonRunService {
         if (hero.getCurrentHp() < 1) {
             combatLines.add(hero.getName() + ": Fled!");
         } else {
-            combatLines.add(hero.getName() + ": " + hero.getCurrentHp() + "HP");
+            combatLines.add(hero.getName() + ": " + hero.getCurrentHp() + " HP");
             if (monster.getCurrentHp() < 1) {
                 lastLine = "You are victorious. Well done!";
             }

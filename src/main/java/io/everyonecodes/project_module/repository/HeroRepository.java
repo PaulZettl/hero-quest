@@ -61,4 +61,11 @@ public class HeroRepository {
                 .query(Long.class)
                 .list();
     }
+
+    public void markDungeonAsComplete(Long heroId, Long dungeonId) {
+        jdbcClient.sql("INSERT INTO hero_dungeon_completed(hero_id, dungeon_id) VALUES(:heroId, :dungeonId) ON CONFLICT DO NOTHING")
+                .param("heroId", heroId)
+                .param("dungeonId", dungeonId)
+                .update();
+    }
 }

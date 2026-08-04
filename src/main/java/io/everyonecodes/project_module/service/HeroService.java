@@ -38,4 +38,8 @@ public class HeroService {
     public List<Long> getAllCompletedDungeonIdsByHeroId(Long id) {
         return repository.getAllCompletedDungeonIdsByHeroId(id);
     }
+
+    public void markDungeonAsComplete(Long heroId, Long dungeonId) {
+        repository.markDungeonAsComplete(heroId, dungeonId);
+    }
 }
