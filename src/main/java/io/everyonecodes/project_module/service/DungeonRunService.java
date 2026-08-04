@@ -27,8 +27,8 @@ public class DungeonRunService {
         Dungeon dungeon = dungeonService.getById(dungeonId).orElseThrow();
         Monster monster = monsterService.getMonsterById(dungeon.getMonsterId()).orElseThrow();
         List<String> combatLines = new ArrayList<>();
-        hero.setCurrentHp(hero.getMaximumHP());
-        monster.setCurrentHp(monster.getMaximumHp());
+        hero.setCurrentHp(getMaximumHp(hero));
+        monster.setCurrentHp(getMaximumHp(monster));
         DungeonReport report = new DungeonReport();
         report.setHeroName(hero.getName());
         report.setDungeonName(dungeon.getName());
@@ -52,8 +52,22 @@ public class DungeonRunService {
                 report.setCombatLines(combatLines);
                 return report;
             }
-            roundNumber ++;
+            roundNumber++;
         }
+    }
+
+    public int getMaximumHp(Hero hero) {
+        if (hero.getConstitutionLevel() == null) {
+            return 0;
+        }
+        return hero.getConstitutionLevel() * 2;
+    }
+
+    public int getMaximumHp(Monster monster) {
+        if (monster.getConstitutionLevel() == null) {
+            return 0;
+        }
+        return monster.getConstitutionLevel() * 2;
     }
 
     public List<String> writeStatus(Hero hero, Monster monster) {
