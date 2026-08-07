@@ -35,12 +35,12 @@ public class DungeonRunService {
         Hero hero = heroService.getById(heroId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hero not found"));
         Dungeon dungeon = dungeonService.getById(dungeonId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dungeon not found"));
         Monster monster = monsterService.getMonsterById(dungeon.getMonsterId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Monster not found"));
-        List<String> combatLines = new ArrayList<>();
-        hero.setCurrentHp(getMaximumHp(hero));
-        monster.setCurrentHp(getMaximumHp(monster));
+        hero.setCurrentHp(getMaximumHp(hero.getConstitutionLevel()));
+        monster.setCurrentHp(getMaximumHp(monster.getConstitutionLevel()));
         DungeonReport report = new DungeonReport();
         report.setHeroName(hero.getName());
         report.setDungeonName(dungeon.getName());
+        List<String> combatLines = new ArrayList<>();
 
         // First round
         combatLines.addAll(writeStatus(hero, monster));
@@ -71,18 +71,8 @@ public class DungeonRunService {
         return report;
     }
 
-    public int getMaximumHp(Hero hero) {
-        if (hero.getConstitutionLevel() == null) {
-            return 0;
-        }
-        return hero.getConstitutionLevel() * maxHpFactor;
-    }
-
-    public int getMaximumHp(Monster monster) {
-        if (monster.getConstitutionLevel() == null) {
-            return 0;
-        }
-        return monster.getConstitutionLevel() * maxHpFactor;
+    public int getMaximumHp(int constitutionScore) {
+        return constitutionScore * maxHpFactor;
     }
 
     public List<String> writeStatus(Hero hero, Monster monster) {
