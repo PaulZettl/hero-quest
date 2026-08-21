@@ -10,4 +10,5 @@ public class Hero {
     private Integer constitutionLevel;
     private Integer speedLevel;
     private int currentHp;
+    private Long playerId;
 }
