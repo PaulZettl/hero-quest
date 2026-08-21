@@ -23,7 +23,7 @@ public class PlayerRepository {
 
     public Player create(Player player) {
         return jdbcClient.sql("INSERT INTO player(username, password) VALUES (:username, :password) RETURNING *")
-                .param("username", player.getUserName())
+                .param("username", player.getUsername())
                 .param("password", player.getPassword())
                 .query(Player.class)
                 .single();

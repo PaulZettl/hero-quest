@@ -3,9 +3,9 @@
 
 INSERT INTO player (username, password)
 VALUES
-('Alice123', 'password123'),
-('Bob_The_Builder', 'buildit99'),
-('Charlie_RPG', 'charlie77')
+    ('Alice123', '$2a$10$uutlt24y60bdJ9TApWxWN.ruMGWvNjg.ahu7Zyf/R8c5uBbiLjTa6'),  -- password123
+    ('Bob_The_Builder', '$2a$10$KRLSlXJ219NuX0o48ZOWm.S.gSecszb3YOGrxqsokqBgtkh5CDzWi'), -- buildit99
+    ('Charlie_RPG', '$2a$10$2oennL9WilNJwHNvnUgPh.4JzekDFtZ.quv1qw8tARaTzqUxkXo4.')   -- charlie77
 ON CONFLICT (username) DO NOTHING;
 
 -- Insert hero mock data

@@ -11,7 +11,7 @@
 CREATE TABLE IF NOT EXISTS player (
     id SERIAL PRIMARY KEY,
     username VARCHAR (20) UNIQUE NOT NULL CHECK (TRIM(username) <> ''),
-    password VARCHAR (20) NOT NULL CHECK (char_length(password) > 6) 
+    password VARCHAR (255) NOT NULL
 );
 
 -- Create hero table:

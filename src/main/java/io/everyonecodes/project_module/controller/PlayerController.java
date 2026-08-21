@@ -26,10 +26,10 @@ public class PlayerController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public PlayerDto register(Player player) {
+    public PlayerDto register(@RequestBody Player player) {
         Player savedPlayer = service.register(player)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken"));
 
-        return new PlayerDto(savedPlayer.getId(), savedPlayer.getUserName());
+        return new PlayerDto(savedPlayer.getId(), savedPlayer.getUsername());
     }
 }
