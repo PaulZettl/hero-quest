@@ -6,22 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import io.everyonecodes.project_module.exception.HeroNameConflictException;
+
 import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
-        String errorMessage = ex.getMostSpecificCause().getMessage();
 
-        if (errorMessage != null && errorMessage.contains("hero_name_key")) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "A hero with this name already exists."));
-        }
-
+    @ExceptionHandler(HeroNameConflictException.class)
+    public ResponseEntity<Map<String, String>> handleHeroConflict(HeroNameConflictException ex) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "Invalid data provided."));
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
     }
 }

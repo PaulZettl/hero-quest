@@ -76,4 +76,11 @@ public class HeroRepository {
                 .param("dungeonId", dungeonId)
                 .update();
     }
+
+    public boolean existsByName(String name) {
+        return jdbcClient.sql("SELECT EXISTS (SELECT 1 FROM hero WHERE name = :name)")
+                .param("name", name)
+                .query((rs, rowNum) -> rs.getBoolean(1))
+                .single();
+    }
 }

@@ -1,6 +1,7 @@
 package io.everyonecodes.project_module.service;
 
 import io.everyonecodes.project_module.entity.Hero;
+import io.everyonecodes.project_module.exception.HeroNameConflictException;
 import io.everyonecodes.project_module.repository.HeroRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,9 @@ public class HeroService {
     }
 
     public Hero create(Hero hero) {
+        if (repository.existsByName(hero.getName())) {
+            throw new HeroNameConflictException("A hero with this name already exists!");
+        }
         return repository.create(hero);
     }
 
