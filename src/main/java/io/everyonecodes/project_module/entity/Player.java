@@ -9,5 +9,4 @@ public class Player {
     private long id;
     private String userName;
     private String password;
-    private Set<Long> heroIds;
 }
