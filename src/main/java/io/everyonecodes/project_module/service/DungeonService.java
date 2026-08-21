@@ -17,10 +17,6 @@ public class DungeonService {
         this.repository = repository;
     }
 
-    private ResponseStatusException dungeonNotFound(Long id) {
-        return new ResponseStatusException(HttpStatus.NOT_FOUND, "Dungeon with ID " + id + " not found");
-    }
-
     public List<Dungeon> getAll() {
         return repository.getAll();
     }
