@@ -31,6 +31,10 @@ public class HeroService {
         return repository.create(hero);
     }
 
+    public List<Hero> getAllByPlayerId(Long playerId) {
+        return repository.getAllByPlayerId(playerId);
+    }
+
     public Optional<Hero> update(Hero hero) {
         return repository.update(hero);
     }

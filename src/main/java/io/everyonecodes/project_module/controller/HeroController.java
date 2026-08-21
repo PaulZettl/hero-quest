@@ -1,7 +1,6 @@
 package io.everyonecodes.project_module.controller;
 
 import io.everyonecodes.project_module.entity.Hero;
-import io.everyonecodes.project_module.repository.HeroRepository;
 import io.everyonecodes.project_module.service.HeroService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +24,11 @@ public class HeroController {
     @GetMapping("/hero")
     public List<Hero> getAllHeroes() {
         return service.getAll();
+    }
+
+    @GetMapping("/player/{playerId}")
+    public List<Hero> getHeroesByPlayer(@PathVariable Long playerId) {
+        return service.getAllByPlayerId(playerId);
     }
 
     @GetMapping("/hero/{id}")

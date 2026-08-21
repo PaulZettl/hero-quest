@@ -21,6 +21,13 @@ public class HeroRepository {
                 .list();
     }
 
+    public List<Hero> getAllByPlayerId(Long playerId) {
+        return jdbcClient.sql("SELECT * FROM hero WHERE player_id = :playerId")
+                .param("playerId", playerId)
+                .query(Hero.class)
+                .list();
+    }
+
     public Optional<Hero> getById(Long id) {
         return jdbcClient.sql("SELECT * FROM hero WHERE id = :id")
                 .param("id", id)
@@ -35,11 +42,12 @@ public class HeroRepository {
     }
 
     public Hero create(Hero hero) {
-        return jdbcClient.sql("INSERT INTO hero(name, strength_level, constitution_level, speed_level) VALUES (:name, :strengthLevel, :constitutionLevel, :speedLevel) RETURNING *")
+        return jdbcClient.sql("INSERT INTO hero(name, strength_level, constitution_level, speed_level, player_id) VALUES (:name, :strengthLevel, :constitutionLevel, :speedLevel, :playerId) RETURNING *")
                 .param("name", hero.getName())
                 .param("strengthLevel", hero.getStrengthLevel())
                 .param("constitutionLevel", hero.getConstitutionLevel())
                 .param("speedLevel", hero.getSpeedLevel())
+                .param("playerId", hero.getPlayerId())
                 .query(Hero.class)
                 .single();
     }
