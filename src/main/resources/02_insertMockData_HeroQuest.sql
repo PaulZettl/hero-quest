@@ -1,10 +1,20 @@
+
+-- Insert player mock data
+
+INSERT INTO player (username, password)
+VALUES
+('Alice123', 'password123'),
+('Bob_The_Builder', 'buildit99'),
+('Charlie_RPG', 'charlie77')
+ON CONFLICT (username) DO NOTHING;
+
 -- Insert hero mock data
 
-INSERT INTO hero (name, strength_level, constitution_level, speed_level)
+INSERT INTO hero (name, strength_level, constitution_level, speed_level, player_id)
 VALUES
-('Jonny Dunce', 1, 1, 1),
-('Sam Greenear', 2, 1, 2),
-('Perry the Veteran', 3, 3, 3)
+('Jonny Dunce', 1, 1, 1, (SELECT id FROM player WHERE username = 'Alice123')),
+('Sam Greenear', 2, 1, 2, (SELECT id FROM player WHERE username = 'Bob_The_Builder')),
+('Perry the Veteran', 3, 3, 3, (SELECT id FROM player WHERE username = 'Bob_The_Builder'))
 ON CONFLICT (name) DO NOTHING;
 
 -- Insert monster mock data

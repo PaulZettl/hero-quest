@@ -2,18 +2,30 @@
 
     DROP TABLE if EXISTS hero_dungeon_completed;
     DROP TABLE if EXISTS hero;
+	DROP TABLE IF EXISTS player;
     DROP TABLE if EXISTS dungeon;
     DROP TABLE if EXISTS monster;
+
+-- Create player table:
+
+CREATE TABLE IF NOT EXISTS player (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR (20) UNIQUE NOT NULL CHECK (TRIM(username) <> ''),
+    password VARCHAR (20) NOT NULL CHECK (char_length(password) > 6) 
+);
 
 -- Create hero table:
 
 CREATE TABLE IF NOT EXISTS hero (
-	id SERIAL PRIMARY KEY,
-	name VARCHAR(20) UNIQUE NOT NULL CHECK (TRIM(name) <> ''), -- Checks that the trimmed name is not an empty String
-	strength_level INT NOT NULL CHECK (strength_level > 0), -- Checks that the level value is not negative or 0
-	constitution_level INT NOT NULL CHECK (constitution_level > 0),
-	speed_level INT NOT NULL CHECK (speed_level > 0)
-	);
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(20) UNIQUE NOT NULL CHECK (TRIM(name) <> ''),
+    strength_level INT NOT NULL CHECK (strength_level > 0), 
+    constitution_level INT NOT NULL CHECK (constitution_level > 0),
+    speed_level INT NOT NULL CHECK (speed_level > 0),
+    player_id INT NOT NULL,
+    FOREIGN KEY (player_id) REFERENCES player(id)
+);
+
 
 -- Create monster table:
 
