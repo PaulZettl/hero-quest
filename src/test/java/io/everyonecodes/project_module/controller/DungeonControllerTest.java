@@ -2,6 +2,7 @@ package io.everyonecodes.project_module.controller;
 
 import io.everyonecodes.project_module.entity.Dungeon;
 import io.everyonecodes.project_module.repository.DungeonRepository;
+import io.everyonecodes.project_module.service.DungeonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -24,7 +25,7 @@ public class DungeonControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private DungeonRepository repository;
+    private DungeonService service;
 
     @Test
     void getAllDungeons_valid() throws Exception {
@@ -39,7 +40,7 @@ public class DungeonControllerTest {
         fakeDungeon3.setName("Test3");
 
         List<Dungeon> fakeDungeons = List.of(fakeDungeon1, fakeDungeon2, fakeDungeon3);
-        when(repository.getAll()).thenReturn(fakeDungeons);
+        when(service.getAll()).thenReturn(fakeDungeons);
         mockMvc.perform(get("/dungeon"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
@@ -51,7 +52,7 @@ public class DungeonControllerTest {
     @Test
     void getAllDungeons_emptyList() throws Exception {
         List<Dungeon> fakeDungeons = List.of();
-        when(repository.getAll()).thenReturn(fakeDungeons);
+        when(service.getAll()).thenReturn(fakeDungeons);
         mockMvc.perform(get("/dungeon"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));

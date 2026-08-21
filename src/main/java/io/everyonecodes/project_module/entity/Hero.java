@@ -9,5 +9,5 @@ public class Hero {
     private Integer strengthLevel;
     private Integer constitutionLevel;
     private Integer speedLevel;
-//    private List<Long> dungeonIds;
+    private int currentHp;
 }

@@ -1,29 +1,31 @@
 package io.everyonecodes.project_module.controller;
 
 import io.everyonecodes.project_module.entity.Dungeon;
-import io.everyonecodes.project_module.repository.DungeonRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import io.everyonecodes.project_module.entity.DungeonReport;
+import io.everyonecodes.project_module.service.DungeonRunService;
+import io.everyonecodes.project_module.service.DungeonService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class DungeonController {
 
-    private final DungeonRepository repository;
+    private final DungeonService service;
+    private final DungeonRunService dungeonRunService;
 
-    public DungeonController(DungeonRepository repository) {
-        this.repository = repository;
-    }
-
-    private ResponseStatusException dungeonNotFound(Long id) {
-        return new ResponseStatusException(HttpStatus.NOT_FOUND, "Dungeon with ID " + id + " not found");
+    public DungeonController(DungeonService service, DungeonRunService dungeonRunService) {
+        this.service = service;
+        this.dungeonRunService = dungeonRunService;
     }
 
     @GetMapping("/dungeon")
     public List<Dungeon> getAllDungeons() {
-        return repository.getAll();
+        return service.getAll();
+    }
+
+    @PostMapping("/dungeon/{dungeonId}/{heroId}")
+    public DungeonReport getDungeonReport(@PathVariable Long dungeonId, @PathVariable Long heroId) {
+        return dungeonRunService.generateReport(heroId, dungeonId);
     }
 }

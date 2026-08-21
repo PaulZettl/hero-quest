@@ -9,4 +9,5 @@ public class Monster {
     private Integer strengthLevel;
     private Integer constitutionLevel;
     private Integer speedLevel;
+    private int currentHp;
 }
