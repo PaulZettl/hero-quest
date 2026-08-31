@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 public class DungeonRunService {
 
+    private final PlayerService playerService;
     private final HeroService heroService;
     private final DungeonService dungeonService;
     private final MonsterService monsterService;
@@ -25,7 +26,8 @@ public class DungeonRunService {
     @Value("${game.combat.max-rounds}")
     private int maxCombatRounds;
 
-    public DungeonRunService(HeroService heroService, DungeonService dungeonService, MonsterService monsterService) {
+    public DungeonRunService(PlayerService playerService, HeroService heroService, DungeonService dungeonService, MonsterService monsterService) {
+        this.playerService = playerService;
         this.heroService = heroService;
         this.dungeonService = dungeonService;
         this.monsterService = monsterService;
@@ -60,6 +62,7 @@ public class DungeonRunService {
                 report.setHeroVictorious(true);
                 report.setCombatLines(combatLines);
                 heroService.markDungeonAsComplete(hero.getId(), dungeon.getId());
+                checkAndRecordFirstCompletion(hero.getPlayerId(), dungeon.getId());
                 return report;
             }
             roundNumber++;
@@ -157,5 +160,11 @@ public class DungeonRunService {
 
         combatLines.add(lastLine);
         return combatLines;
+    }
+
+    public void checkAndRecordFirstCompletion(Long playerId, Long dungeonId) {
+        if (!playerService.checkFirstCompletion(playerId, dungeonId)) {
+            playerService.markFirstCompletionOfDungeon(playerId, dungeonId);
+        }
     }
 }

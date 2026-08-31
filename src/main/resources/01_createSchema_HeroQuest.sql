@@ -1,17 +1,19 @@
 -- Drop tables for development
 
-    DROP TABLE if EXISTS hero_dungeon_completed;
-    DROP TABLE if EXISTS hero;
-	DROP TABLE IF EXISTS player;
-    DROP TABLE if EXISTS dungeon;
-    DROP TABLE if EXISTS monster;
+    DROP TABLE if EXISTS player_dungeon_first_completions CASCADE;
+    DROP TABLE if EXISTS hero_dungeon_completed CASCADE;
+    DROP TABLE if EXISTS hero CASCADE;
+	DROP TABLE IF EXISTS player CASCADE;
+    DROP TABLE if EXISTS dungeon CASCADE;
+    DROP TABLE if EXISTS monster CASCADE;
 
 -- Create player table:
 
 CREATE TABLE IF NOT EXISTS player (
     id SERIAL PRIMARY KEY,
     username VARCHAR (20) UNIQUE NOT NULL CHECK (TRIM(username) <> ''),
-    password VARCHAR (255) NOT NULL
+    password VARCHAR (255) NOT NULL,
+    experience INT NOT NULL
 );
 
 -- Create hero table:
@@ -57,3 +59,13 @@ CREATE TABLE IF NOT EXISTS hero_dungeon_completed (
 	FOREIGN KEY (hero_id) REFERENCES hero(id) ON DELETE CASCADE,
 	FOREIGN KEY (dungeon_id) REFERENCES dungeon(id) ON DELETE CASCADE
 	);
+
+-- Create player_dungeon_first_completion table
+
+CREATE TABLE IF NOT EXISTS player_dungeon_first_completions (
+    player_id INT NOT NULL,
+    dungeon_id INT NOT NULL,
+    PRIMARY KEY (player_id, dungeon_id),
+    FOREIGN KEY (player_id) REFERENCES player(id) ON DELETE CASCADE,
+    FOREIGN KEY (dungeon_id) REFERENCES dungeon(id) ON DELETE CASCADE
+)

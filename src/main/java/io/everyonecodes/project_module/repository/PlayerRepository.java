@@ -35,4 +35,34 @@ public class PlayerRepository {
                 .query((rs, rowNum) -> rs.getBoolean(1)) // Explicitly map JDBC driver's boolean representation
                 .single();
     }
+
+    public Optional<Integer> getExperience(String username) {
+        return jdbcClient.sql("SELECT experience FROM player WHERE username = :username")
+                .param("username", username)
+                .query(Integer.class)
+                .optional();
+    }
+
+    public void markFirstCompletionOfDungeon(Long playerId, Long dungeonId) {
+        jdbcClient.sql("INSERT INTO player_dungeon_first_completions(player_id, dungeon_id) VALUES(:playerId, :dungeonId) ON CONFLICT DO NOTHING")
+                .param("playerId", playerId)
+                .param("dungeonId", dungeonId)
+                .update();
+    }
+
+    public boolean existsById(Long playerId, Long dungeonId) {
+        return jdbcClient.sql("SELECT EXISTS (SELECT 1 FROM player_dungeon_first_completions WHERE player_id = :playerId AND dungeon_id = :dungeonId)")
+                .param("playerId", playerId)
+                .param("dungeonId", dungeonId)
+                .query(Boolean.class)
+                .single();
+    }
+
+    public void addExperience(Long playerId, int experienceAmountToAdd) {
+            jdbcClient.sql("UPDATE player SET experience = experience + :experienceAmountToAdd WHERE id = :playerId")
+                    .param("experienceAmountToAdd", experienceAmountToAdd)
+                    .param("playerId", playerId)
+                    .update();
+
+    }
 }

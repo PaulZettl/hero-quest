@@ -1,11 +1,11 @@
 
 -- Insert player mock data
 
-INSERT INTO player (username, password)
+INSERT INTO player (username, password, experience)
 VALUES
-    ('Alice123', '$2a$10$uutlt24y60bdJ9TApWxWN.ruMGWvNjg.ahu7Zyf/R8c5uBbiLjTa6'),  -- password123
-    ('Bob_The_Builder', '$2a$10$KRLSlXJ219NuX0o48ZOWm.S.gSecszb3YOGrxqsokqBgtkh5CDzWi'), -- buildit99
-    ('Charlie_RPG', '$2a$10$2oennL9WilNJwHNvnUgPh.4JzekDFtZ.quv1qw8tARaTzqUxkXo4.')   -- charlie77
+    ('Alice123', '$2a$10$uutlt24y60bdJ9TApWxWN.ruMGWvNjg.ahu7Zyf/R8c5uBbiLjTa6', 0),  -- password123
+    ('Bob_The_Builder', '$2a$10$KRLSlXJ219NuX0o48ZOWm.S.gSecszb3YOGrxqsokqBgtkh5CDzWi', 4), -- buildit99
+    ('Charlie_RPG', '$2a$10$2oennL9WilNJwHNvnUgPh.4JzekDFtZ.quv1qw8tARaTzqUxkXo4.', 0)   -- charlie77
 ON CONFLICT (username) DO NOTHING;
 
 -- Insert hero mock data
@@ -67,3 +67,17 @@ VALUES
     (SELECT id FROM dungeon WHERE name = 'Sticky Fingers')
 )
 ON CONFLICT (hero_id, dungeon_id) DO NOTHING;
+
+-- Insert player_dungeon_first_completions mock data
+
+INSERT INTO player_dungeon_first_completions (player_id, dungeon_id)
+VALUES
+    (
+        (SELECT id FROM player WHERE username = 'Bob_The_Builder'),
+        (SELECT id FROM dungeon WHERE name = 'First Impressions')
+    ),
+    (
+        (SELECT id FROM player WHERE username = 'Bob_The_Builder'),
+        (SELECT id FROM dungeon WHERE name = 'Sticky Fingers')
+    )
+    ON CONFLICT (player_id, dungeon_id) DO NOTHING;

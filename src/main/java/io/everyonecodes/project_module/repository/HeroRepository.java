@@ -80,7 +80,7 @@ public class HeroRepository {
     public boolean existsByName(String name) {
         return jdbcClient.sql("SELECT EXISTS (SELECT 1 FROM hero WHERE name = :name)")
                 .param("name", name)
-                .query((rs, rowNum) -> rs.getBoolean(1))
+                .query(Boolean.class)
                 .single();
     }
 }

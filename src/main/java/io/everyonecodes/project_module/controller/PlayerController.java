@@ -4,10 +4,7 @@ import io.everyonecodes.project_module.dto.PlayerDto;
 import io.everyonecodes.project_module.entity.Player;
 import io.everyonecodes.project_module.service.PlayerService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -28,8 +25,13 @@ public class PlayerController {
     @ResponseStatus(HttpStatus.CREATED)
     public PlayerDto register(@RequestBody Player player) {
         Player savedPlayer = service.register(player)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken."));
 
         return new PlayerDto(savedPlayer.getId(), savedPlayer.getUsername());
+    }
+
+    @GetMapping("/{username}/experience")
+    public int getExperience(@PathVariable String username) {
+        return service.getExperience(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found."));
     }
 }
