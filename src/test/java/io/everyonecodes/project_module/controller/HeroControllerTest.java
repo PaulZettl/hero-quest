@@ -1,6 +1,7 @@
 package io.everyonecodes.project_module.controller;
 
 import io.everyonecodes.project_module.entity.Hero;
+import io.everyonecodes.project_module.exception.GlobalExceptionHandler;
 import io.everyonecodes.project_module.service.HeroService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

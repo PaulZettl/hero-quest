@@ -1,11 +1,9 @@
-package io.everyonecodes.project_module.controller;
+package io.everyonecodes.project_module.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import io.everyonecodes.project_module.exception.HeroNameConflictException;
 
 import java.util.Map;
 

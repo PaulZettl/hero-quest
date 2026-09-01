@@ -1,7 +1,7 @@
 package io.everyonecodes.project_module.controller;
 
 import io.everyonecodes.project_module.entity.Dungeon;
-import io.everyonecodes.project_module.repository.DungeonRepository;
+import io.everyonecodes.project_module.exception.GlobalExceptionHandler;
 import io.everyonecodes.project_module.service.DungeonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
